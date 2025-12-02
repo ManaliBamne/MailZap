@@ -53,7 +53,7 @@ def send_test():
                 recipients=[email],
                 html=html_content
             )
-            mail.send(msg)
+            # mail.send(msg)  # TEMP: disable actual sending
             sent_count += 1
         
         return jsonify({
