@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickMailTest - Free HTML Email Testing Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .highlight p {
+            color: #78350f;
+            margin: 0;
+        }
+        
+        label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 25px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background: #edf2f7;
+        }
+        
+        #status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .status-loading {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .example-link {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+        
+        .example-link:hover {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>QuickMailTest</h1>
+            <p class="subtitle">Free HTML email testing tool • PutsMail alternative</p>
+        </div>
+        
+        <div class="highlight">
+            <p><strong>💡 Why QuickMailTest?</strong> Litmus retired PutsMail, leaving email marketers without a simple, free testing tool. This is built by someone who used it daily.</p>
+        </div>
+        
+        <form id="emailTestForm">
+            <label for="htmlCode">
+                Paste Your HTML Email Code:
+                <span class="example-link" onclick="loadExample()">(or load example)</span>
+            </label>
+            <textarea 
+                id="htmlCode" 
+                placeholder="Paste your HTML email code here...&#10;&#10;Example:&#10;&lt;html&gt;&#10;&lt;body style='font-family: Arial;'&gt;&#10;  &lt;h1&gt;Hello!&lt;/h1&gt;&#10;  &lt;p&gt;This is a test email.&lt;/p&gt;&#10;&lt;/body&gt;&#10;&lt;/html&gt;"
+                required
+            ></textarea>
+            
+            <label for="testEmails">
+                Send Test To (up to 3 emails, comma-separated):
+            </label>
+            <input 
+                type="text" 
+                id="testEmails" 
+                placeholder="you@example.com, colleague@example.com"
+                required
+            >
+            
+            <div class="button-group">
+                <button type="submit" class="btn-primary" id="sendBtn">
+                    📧 Send Test Email
+                </button>
+                <button type="button" class="btn-secondary" onclick="clearForm()">
+                    🔄 Clear
+                </button>
+            </div>
+        </form>
+        
+        <div id="status"></div>
+        
+        <div class="footer">
+            <p>Made with ❤️ for email marketers | <a href="https://github.com/yourusername/quickmailtest" target="_blank">View on GitHub</a></p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">Free forever • No signup required • No data stored</p>
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('emailTestForm');
+        const statusDiv = document.getElementById('status');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const htmlCode = document.getElementById('htmlCode').value.trim();
+            const emails = document.getElementById('testEmails').value.trim();
+            
+            if (!htmlCode || !emails) {
+                showStatus('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Disable button and show loading
+            sendBtn.disabled = true;
+            sendBtn.textContent = '⏳ Sending...';
+            showStatus('Sending test email...', 'loading');
+            
+            try {
+                const response = await fetch('/send-test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        html: htmlCode,
+                        emails: emails
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus(result.message, 'success');
+                } else {
+                    showStatus(result.message, 'error');
+                }
+            } catch (error) {
+                showStatus('Network error. Please check your connection and try again.', 'error');
+            } finally {
+                // Re-enable button
+                sendBtn.disabled = false;
+                sendBtn.textContent = '📧 Send Test Email';
+            }
+        });
+        
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function clearForm() {
+            document.getElementById('htmlCode').value = '';
+            document.getElementById('testEmails').value = '';
+            statusDiv.style.display = 'none';
+        }
+        
+        function loadExample() {
+            document.getElementById('htmlCode').value = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">Welcome to QuickMailTest!</h1>
+    </div>
+    
+    <div style="background: #f7fafc; padding: 30px; border-radius: 0 0 10px 10px;">
+        <h2 style="color: #2d3748;">This is a test email</h2>
+        <p>If you're seeing this, it means QuickMailTest is working perfectly! 🎉</p>
+        
+        <p>You can now test your HTML emails quickly and easily.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="#" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Test Button</a>
+        </div>
+        
+        <p style="color: #718096; font-size: 14px; margin-top: 30px;">Made with ❤️ for email marketers</p>
+    </div>
+</body>
+</html>`;
+        }
+    </script>
+</body>
+</html>
+ 
