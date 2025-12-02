@@ -49,7 +49,7 @@ def send_test():
         sent_count = 0
         for email in email_list:
             msg = Message(
-                subject='Test Email from QuickMailTest',
+                subject='Test Email from MailZap',
                 recipients=[email],
                 html=html_content
             )
@@ -60,8 +60,8 @@ def send_test():
             'status': 'success',
             'message': f'✓ Test email sent successfully to {sent_count} address(es)!'
         })
-        
-        except Exception as e:
+    
+    except Exception as e:
         # Log full traceback so we can see it in Render logs
         traceback.print_exc()
         return jsonify({
@@ -72,4 +72,3 @@ def send_test():
 
 if __name__ == '__main__':
     app.run()
-
