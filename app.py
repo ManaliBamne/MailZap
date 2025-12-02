@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_mail import Mail, Message
 import os
+import traceback
 
 app = Flask(__name__)
 
@@ -60,11 +61,14 @@ def send_test():
             'message': f'✓ Test email sent successfully to {sent_count} address(es)!'
         })
         
-    except Exception as e:
+        except Exception as e:
+        # Log full traceback so we can see it in Render logs
+        traceback.print_exc()
         return jsonify({
             'status': 'error',
             'message': f'Error sending email: {str(e)}'
         }), 500
+
 
 if __name__ == '__main__':
     app.run()
