@@ -7,8 +7,9 @@ app = Flask(__name__)
 
 # Email configuration - we'll use environment variables
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME', '')
@@ -53,8 +54,9 @@ def send_test():
                 recipients=[email],
                 html=html_content
             )
-            # mail.send(msg)  # TEMP: disable actual sending
+            mail.send(msg)  # enable this again
             sent_count += 1
+
         
         return jsonify({
             'status': 'success',
