@@ -6,8 +6,8 @@ import traceback
 app = Flask(__name__)
 
 # Email configuration - Mailtrap test SMTP
-app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'  # from Mailtrap
-app.config['MAIL_PORT'] = 587                           # OR 2525 if Mailtrap says so
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 587      # or 2525, but must match Mailtrap
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
@@ -48,13 +48,13 @@ def send_test():
         
         # Send test emails
         sent_count = 0
-        for email in email_list:
+                for email in email_list:
             msg = Message(
                 subject='Test Email from MailZap',
                 recipients=[email],
                 html=html_content
             )
-            mail.send(msg)  # enable this again
+            mail.send(msg)
             sent_count += 1
 
         
