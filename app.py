@@ -1,20 +1,14 @@
 from flask import Flask, render_template, request, jsonify
-from flask_mail import Mail, Message
 import os
 import traceback
+import requests
 
 app = Flask(__name__)
 
-# Email configuration - Gmail SMTP for LOCAL USE
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME', '')
-
-mail = Mail(app)
+# Mailgun configuration via environment variables
+MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY', '')
+MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN', '')
+MAIL_FROM = os.environ.get('MAIL_FROM', '')
 
 @app.route('/')
 def index():
@@ -33,6 +27,7 @@ def send_test():
                 'message': 'Please provide both HTML code and email address(es)'
             }), 400
         
+        # Clean and limit recipients
         email_list = [e.strip() for e in emails_string.split(',') if e.strip()]
         email_list = email_list[:3]
         
@@ -42,19 +37,50 @@ def send_test():
                 'message': 'Please provide valid email address(es)'
             }), 400
         
+        if not MAILGUN_API_KEY or not MAILGUN_DOMAIN or not MAIL_FROM:
+            return jsonify({
+                'status': 'error',
+                'message': 'Server email configuration is missing.'
+            }), 500
+        
         sent_count = 0
+        errors = []
+        
         for email in email_list:
-            msg = Message(
-                subject='Test Email from MailZap',
-                recipients=[email],
-                html=html_content
-            )
-            mail.send(msg)
-            sent_count += 1
+            try:
+                response = requests.post(
+                    f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
+                    auth=("api", MAILGUN_API_KEY),
+                    data={
+                        "from": MAIL_FROM,
+                        "to": email,
+                        "subject": "Test Email from MailZap",
+                        "html": html_content
+                    },
+                    timeout=15
+                )
+                
+                if response.status_code == 200:
+                    sent_count += 1
+                else:
+                    errors.append(f"{email}: {response.status_code} {response.text[:100]}")
+            
+            except Exception as inner_e:
+                errors.append(f"{email}: {str(inner_e)}")
+        
+        if sent_count == 0:
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to send to all recipients: ' + '; '.join(errors)
+            }), 500
+        
+        message = f"✓ Test email sent successfully to {sent_count} address(es)!"
+        if errors:
+            message += f" Some addresses failed: {'; '.join(errors)}"
         
         return jsonify({
             'status': 'success',
-            'message': f'✓ Test email sent successfully to {sent_count} address(es)!'
+            'message': message
         })
     
     except Exception as e:
